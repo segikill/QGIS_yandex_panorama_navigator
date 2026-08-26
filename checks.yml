@@ -1,0 +1,25 @@
+name: Checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install ruff bandit detect-secrets flake8
+      - run: python scripts/validate_release.py --technical
+      - run: python -m compileall -q yandex_panorama_navigator
+      - run: python -B -m unittest discover -s tests -p "test_*.py"
+      - run: ruff check yandex_panorama_navigator tests scripts
+      - run: flake8 yandex_panorama_navigator tests scripts
+      - run: bandit -q -r yandex_panorama_navigator
+      - name: Detect secrets
+        run: |
+          detect-secrets scan yandex_panorama_navigator > /tmp/secrets.json
+          python -c "import json; data=json.load(open('/tmp/secrets.json')); assert not data['results'], data['results']"

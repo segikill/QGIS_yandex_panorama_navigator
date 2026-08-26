@@ -1,0 +1,4 @@
+plugin_path: yandex_panorama_navigator
+changelog_path: CHANGELOG.md
+changelog_include: true
+changelog_number_of_entries: 3
