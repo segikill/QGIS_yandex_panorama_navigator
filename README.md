@@ -1,60 +1,43 @@
-# Yandex Panorama Coverage Overlay
+# Yandex Panorama Coverage Overlay for QGIS
 
-Experimental QGIS plugin that temporarily displays Yandex panorama coverage above the map canvas and opens Yandex Maps at a selected position and viewing direction.
+Experimental QGIS plugin that temporarily displays Yandex panorama coverage above the map canvas and opens Yandex Maps in the system browser at a selected position and viewing direction.
 
-## Important publication notice
+The coverage is a private canvas-only overlay. It is never registered in `QgsProject`, never appears in the Layers panel and is not saved in `.qgz` projects. The overlay is removed after a panorama opens or selection is cancelled.
 
-This technical release candidate uses an undocumented Yandex coverage renderer. It is not affiliated with or endorsed by Yandex. Do not upload or distribute the coverage-enabled build until the publisher has confirmed that the intended use is permitted by the current Yandex terms or has obtained written permission from Yandex.
+## Repository layout
 
-## Features
-
-- Displays coverage only in the map canvas, above all project layers.
-- Does not register the coverage in `QgsProject`, the Layers panel or saved `.qgz` projects.
-- Removes the coverage after opening a panorama or pressing `Esc`.
-- Converts coordinates from the project CRS to EPSG:4326.
-- Opens Yandex Maps only in the default external browser, without extra Python dependencies.
-- Allows dragging from the selected point to define the initial viewing azimuth.
-
-Unlike the existing deprecated **Yandex Panoramas** plugin in the official QGIS repository, this plugin adds temporary coverage visualization and drag-to-set direction while keeping the project layer list unchanged.
-
-## Installation for testing
-
-1. Keep the plugin ZIP compressed.
-2. Open **Plugins → Manage and Install Plugins → Install from ZIP** in QGIS.
-3. Select the release-candidate archive.
-4. Enable experimental plugins if required.
-
-## Usage
-
-1. Click the panorama-coverage button on the plugin toolbar.
-2. Wait for the blue coverage to appear above the current map.
-3. Click a covered location, or drag to define the initial direction.
-4. Yandex Maps opens in the default browser and the temporary coverage disappears.
-
-The interface is currently Russian. English localization is recommended before a stable public release.
+- `yandex_panorama_navigator/` — installable QGIS plugin source.
+- `tests/` — dependency-free and QGIS-runtime regression tests.
+- `scripts/` — validation and release packaging tools.
+- `.github/workflows/checks.yml` — static analysis and unit-test workflow.
 
 ## Compatibility
 
 - Declared: QGIS 3.28–3.99.
-- Tested locally: QGIS 3.28, 3.34 and 3.44 on Windows.
-- QGIS 4 is not declared in this release candidate because it has not been tested in an actual Qt6 QGIS runtime.
+- Tested: QGIS 3.28.1, 3.34.3 and 3.44.8 on Windows.
+- QGIS 4 is not declared because the plugin has not been tested in a complete QGIS 4 Python runtime.
 
-## Known limitations
+## Development checks
 
-- Coverage depends on an undocumented renderer and may stop working without notice.
-- Automatic renderer-version discovery depends on the current Yandex Maps page structure.
-- If no panorama exists near a selected point, Yandex Maps may open its ordinary map view.
+```powershell
+python scripts/validate_release.py --technical
+python -B -m unittest discover -s tests -p "test_*.py"
+```
+
+The installable archive must contain one top-level directory named `yandex_panorama_navigator`. Development files, tests and caches must not be included in the plugin ZIP.
+
+## Important publication notice
+
+The coverage implementation currently uses an undocumented Yandex renderer endpoint. This project is not affiliated with or endorsed by Yandex. Before public distribution, the publisher must confirm that the intended use is permitted by the current Yandex terms or obtain written permission from Yandex. See `LEGAL_REVIEW_REQUIRED.md`.
 
 ## License
 
-GNU General Public License version 2 or, at the user's option, any later version. See `LICENSE`.
+GNU General Public License version 2 or, at your option, any later version. See `LICENSE`.
 
 ---
 
-# Русская инструкция
+# Русское описание
 
-Плагин временно показывает покрытие Яндекс Панорам поверх холста QGIS и открывает панораму по выбранной точке.
+Плагин временно показывает покрытие Яндекс Панорам поверх холста QGIS. Слой существует только внутри холста, не попадает в список слоёв и проект QGIS. После выбора точки панорама открывается во внешнем браузере, а покрытие удаляется.
 
-Покрытие не добавляется в проект, список слоёв или файл `.qgz`. После открытия панорамы либо отмены клавишей `Esc` оно удаляется с холста.
-
-Панорама открывается только во внешнем браузере.
+Исходники устанавливаемого плагина находятся в каталоге `yandex_panorama_navigator/`.
